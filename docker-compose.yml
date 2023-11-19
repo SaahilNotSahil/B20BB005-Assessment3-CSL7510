@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  CONB20BB005_1:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:8080"
+    depends_on:
+      - CONB20BB005_2
+    networks:
+      - b20bb005
+
+  CONB20BB005_2:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql
+    networks:
+      - b20bb005
+
+  CONB20BB005_3:
+    image: alpine:latest
+    command: apk add curl
+    depends_on:
+      - CONB20BB005_1
+    networks:
+      - b20bb005
+
+volumes:
+  pg_data:
+
+networks:
+  b20bb005:
+    driver: bridge
